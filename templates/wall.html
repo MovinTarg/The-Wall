@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>The Wall</title>
+        <link rel="stylesheet" types="text/css" href="{{ url_for('static', filename='style.css') }}">
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+        <!-- <script rel="text/javascript" src="script.js"></script> -->
+    </head>
+    <body>
+        <div id="container">
+            <div class='header'>
+                <h3>Coding Dojo Wall</h3>
+                <p>Welcome {{ session['first_name'] }}</p>
+                <a href='/clear'>Log off</a>
+            </div>
+            <div class="content">
+                <h3>Post a message</h3>
+                <form action='/post_message', method='POST'>
+                    <input type="textarea" name='message_input' class="message_box">
+                    <input type="submit" value="Post a message" class="message_btn">
+                </form>
+                <div class="message_board">
+                    {% for message in all_messages: %}
+                    <h4>{{ message['full_name'] }} - {{ message['created_at'] }}</h4>
+                    <p>{{ message['message'] }}</p>
+                    {% if message['user_id'] == session['logged_id'] %}
+                    <form action="/remove_message" method="POST">
+                        <input type="hidden" name="get_m_id" value="{{ message['id'] }}">
+                        <input type="submit" value="Remove">
+                    </form>
+                    {% endif %}
+                    {% for comment in all_comments: %}
+                    {% if comment['message_id'] == message['id'] %}
+                    <h4 class="comment">{{ comment['full_name'] }} - {{ comment['created_at'] }}</h4>
+                    <p class="comment">{{ comment['comment'] }}</p>
+                    {% endif %}
+                    {% endfor %}
+                    <h3>Post a comment</h3>
+                    <form action='/post_comment', method='POST'>
+                        <input type="hidden" name="get_m_id" value="{{ message['id'] }}">
+                        <input type="textarea" name='comment_input' class="comment_box">
+                        <input type="submit" value="Post a comment" class="comment_btn">
+                    </form>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </body>
+</html>
